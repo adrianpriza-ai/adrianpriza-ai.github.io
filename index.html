@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adrianpriza-ai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --surface: #111115;
+      --border: #1e1e26;
+      --red: #c0392b;
+      --red-dim: #7a1f17;
+      --silver: #a8aab0;
+      --white: #e8e8ec;
+      --muted: #4a4a55;
+      --purple: #3a2040;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blob */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 48px 0 0;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--red);
+      letter-spacing: 0.1em;
+    }
+
+    .logo span {
+      color: var(--muted);
+    }
+
+    .status {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #2ecc71;
+      border-radius: 50%;
+      -webkit-animation: pulse 2s infinite;
+              animation: pulse 2s infinite;
+    }
+
+    @-webkit-keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 60px;
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--red);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.1s;
+              animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-name {
+      font-family: var(--sans);
+      font-size: clamp(42px, 8vw, 80px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.2s;
+              animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-name .accent {
+      color: var(--red);
+    }
+
+    .hero-tagline {
+      margin-top: 28px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--silver);
+      line-height: 1.7;
+      max-width: 500px;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.35s;
+              animation: fadeUp 0.6s ease forwards 0.35s;
+    }
+
+    .hero-tagline .cmd {
+      color: var(--red);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      gap: 16px;
+      margin: 48px 0;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.5s;
+              animation: fadeUp 0.6s ease forwards 0.5s;
+    }
+
+    .divider-line {
+      -webkit-box-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
+      height: 1px;
+      background: -webkit-linear-gradient(left, var(--red-dim), var(--border));
+      background: linear-gradient(to right, var(--red-dim), var(--border));
+    }
+
+    .divider-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── CARDS ── */
+    .cards {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.6s;
+              animation: fadeUp 0.6s ease forwards 0.6s;
+    }
+
+    @media (max-width: 540px) {
+      .cards {
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      -webkit-transition: border-color 0.3s;
+              transition: border-color 0.3s;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--red);
+      opacity: 0;
+      -webkit-transition: opacity 0.3s;
+              transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--red-dim);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--red);
+      margin-bottom: 12px;
+      letter-spacing: 0.1em;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--silver);
+      line-height: 1.6;
+    }
+
+    /* ── STACK ── */
+    .stack-section {
+      margin: 48px 0;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.75s;
+              animation: fadeUp 0.6s ease forwards 0.75s;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .tags {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      color: var(--silver);
+      background: var(--surface);
+      -webkit-transition: border-color 0.2s, color 0.2s;
+              transition: border-color 0.2s, color 0.2s;
+      cursor: default;
+    }
+
+    .tag:hover {
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .tag.highlight {
+      border-color: var(--red-dim);
+      color: var(--red);
+    }
+
+    /* ── PROJECT LINK ── */
+    .project-section {
+      margin: 48px 0;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 0.9s;
+              animation: fadeUp 0.6s ease forwards 0.9s;
+    }
+
+    .project-link {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      text-decoration: none;
+      -webkit-transition: border-color 0.3s, background 0.3s;
+              transition: border-color 0.3s, background 0.3s;
+    }
+
+    .project-link:hover {
+      border-color: var(--red);
+      background: rgba(192,57,43,0.05);
+    }
+
+    .project-link-left {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      gap: 4px;
+    }
+
+    .project-link-name {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--white);
+    }
+
+    .project-link-desc {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .project-link-arrow {
+      font-family: var(--mono);
+      font-size: 18px;
+      color: var(--red);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0 40px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      opacity: 0;
+      -webkit-animation: fadeUp 0.6s ease forwards 1.05s;
+              animation: fadeUp 0.6s ease forwards 1.05s;
+    }
+
+    @media (max-width: 480px) {
+      footer {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        gap: 12px;
+        -webkit-box-align: start;
+            -ms-flex-align: start;
+                align-items: flex-start;
+      }
+    }
+
+    .footer-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-link {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--silver);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      -webkit-transition: color 0.2s, border-color 0.2s;
+              transition: color 0.2s, border-color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    /* ── ANIMATIONS ── */
+    @-webkit-keyframes fadeUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translateY(16px);
+                transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+                transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translateY(16px);
+                transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+                transform: translateY(0);
+      }
+    }
+
+    /* ── SCANLINE EFFECT ── */
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(192,57,43,0.15);
+      pointer-events: none;
+      z-index: 999;
+      -webkit-animation: scan 6s linear infinite;
+              animation: scan 6s linear infinite;
+    }
+
+    @-webkit-keyframes scan {
+      0% { top: 0; }
+      100% { top: 100vh; }
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100vh; }
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--red-dim); }
+  </style>
+</head>
+<body>
+
+  <div class="scanline"></div>
+
+  <div class="container">
+
+    <header>
+      <div class="logo"><span>~/</span>adrianpriza-ai</div>
+      <div class="status">
+        <div class="status-dot"></div>
+        online
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-label">// introduction</div>
+      <h1 class="hero-name">
+        Linux<br />
+        <span class="accent">Enthusiast.</span>
+      </h1>
+      <p class="hero-tagline">
+        <span class="cmd">$</span> tinkerer building custom desktop environments
+        on Arch Linux &mdash; Wayfire, Wayland, and low-end hardware.<br />
+        <span class="cmd">$</span> work in progress. always.
+      </p>
+    </section>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">// about</div>
+      <div class="divider-line" style="background: -webkit-linear-gradient(right, #3a1510, #1e1e26); background: linear-gradient(to left, #3a1510, #1e1e26);"></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">[01]</div>
+        <div class="card-title">Desktop Customization</div>
+        <div class="card-desc">Building Eww widget ecosystems, Waybar configs, and full dotfile setups from scratch.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">[02]</div>
+        <div class="card-title">Low-End Focused</div>
+        <div class="card-desc">Optimizing for 1366&times;768, AMD APU hardware. Performance matters.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">[03]</div>
+        <div class="card-title">Open Source</div>
+        <div class="card-desc">All configs public on GitHub. Clone, fork, adapt — that's the point.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">[04]</div>
+        <div class="card-title">Always Learning</div>
+        <div class="card-desc">Shell scripting, Wayland protocols, and whatever breaks next.</div>
+      </div>
+    </div>
+
+    <div class="stack-section">
+      <div class="section-label">// stack</div>
+      <div class="tags">
+        <span class="tag highlight">Arch Linux</span>
+        <span class="tag highlight">Wayfire</span>
+        <span class="tag highlight">Eww</span>
+        <span class="tag">Waybar</span>
+        <span class="tag">fish shell</span>
+        <span class="tag">rofi</span>
+        <span class="tag">kitty</span>
+        <span class="tag">mako</span>
+        <span class="tag">Wayland</span>
+        <span class="tag">bash / sh</span>
+        <span class="tag">git</span>
+      </div>
+    </div>
+
+    <div class="project-section">
+      <div class="section-label">// projects</div>
+      <a class="project-link" href="https://github.com/adrianpriza-ai/my-wayfire-config" target="_blank" rel="noopener">
+        <div class="project-link-left">
+          <div class="project-link-name">my-wayfire-config</div>
+          <div class="project-link-desc">Personal Wayfire dotfiles for Arch Linux &mdash; WIP</div>
+        </div>
+        <div class="project-link-arrow">&#8599;</div>
+      </a>
+    </div>
+
+    <footer>
+      <div class="footer-text">// adrianpriza-ai &mdash; 2025</div>
+      <a class="footer-link" href="https://github.com/adrianpriza-ai" target="_blank" rel="noopener">github.com/adrianpriza-ai</a>
+    </footer>
+
+  </div>
+
+</body>
+</html>
