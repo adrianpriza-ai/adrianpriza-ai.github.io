@@ -73,7 +73,7 @@
     @-webkit-keyframes bootFade { to { opacity: 0; pointer-events: none; } }
     @keyframes bootFade { to { opacity: 0; pointer-events: none; } }
 
-    /* ── MATRIX RAIN CANVAS ── */
+    /* ── CMATRIX CANVAS ── */
     #bg-canvas {
       position: fixed;
       top: 0; left: 0;
@@ -81,27 +81,8 @@
       z-index: 0;
       pointer-events: none;
       opacity: 0.35;
-      -ms-interpolation-mode: nearest-neighbor;
-          image-rendering: -moz-crisp-edges;
-          image-rendering: pixelated;
       will-change: contents;
     }
-
-    /* ── SCANLINE ── */
-    .scanline {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 2px;
-      background: rgba(192,57,43,0.15);
-      pointer-events: none;
-      z-index: 999;
-      -webkit-animation: scan 6s linear infinite;
-              animation: scan 6s linear infinite;
-    }
-
-    @-webkit-keyframes scan { 0% { top: 0; } 100% { top: 100vh; } }
-    @keyframes scan          { 0% { top: 0; } 100% { top: 100vh; } }
 
     /* ── GLOW BLOB (kept from original) ── */
     body::after {
@@ -333,7 +314,7 @@
               transition: border-color 0.2s, color 0.2s;
       cursor: default;
     }
-    .tag:hover { border-color: var(--red); color: var(--white); }
+    .tag:hover { border-color: var(--red); color: var(--white); background: rgba(192,57,43,0.05); }
     .tag.highlight { border-color: var(--red-dim); color: var(--red); }
 
     /* ── PROJECT ── */
@@ -413,7 +394,7 @@
       -webkit-transition: border-color 0.2s, color 0.2s;
               transition: border-color 0.2s, color 0.2s;
     }
-    .social-link:hover { border-color: var(--red); color: var(--white); }
+    .social-link:hover { border-color: var(--red); color: var(--white); background: rgba(192,57,43,0.05); }
     .social-link svg { width: 14px; height: 14px; fill: currentColor; -ms-flex-negative: 0; flex-shrink: 0; }
 
     /* ── FOOTER ── */
@@ -460,32 +441,38 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--red-dim); }
-    * { scrollbar-width: thin; scrollbar-color: var(--red-dim) var(--bg); }
+    /* ── MOBILE ── */
+    @media (max-width: 720px) {
+      #boot { padding: 1.5rem; font-size: 0.72rem; }
+      .container { padding: 0 16px; }
+      header { padding: 28px 0 16px; }
+      .hero { padding: 48px 0 36px; }
+      .hero-tagline { font-size: 12px; }
+      .divider { margin: 28px 0; }
+      .cards { gap: 10px; }
+      .card { padding: 16px; }
+      .stack-section, .project-section, .social-section { margin: 28px 0; }
+      .social-links { -webkit-box-orient: vertical; -ms-flex-direction: column; flex-direction: column; }
+      footer { -webkit-box-orient: vertical; -ms-flex-direction: column; flex-direction: column; gap: 10px; -webkit-box-align: start; -ms-flex-align: start; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
 
   <!-- BOOT -->
   <div id="boot">
-    <div class="line">ADRIANPRIZA_OS v2.4 — BOOT SEQUENCE INITIATED</div>
-    <div class="line">CPU: AMD A6-5200 &nbsp;|&nbsp; RAM: 8GB DDR3L &nbsp;|&nbsp; ARCH LINUX / WAYFIRE</div>
-    <div class="line">LOADING kernel modules... [████████░░] 82%</div>
-    <div class="line">MOUNTING partitions... OK</div>
-    <div class="line">STARTING display server: wayfire [WAYLAND]... OK</div>
-    <div class="line">LOADING user profile: adrianpriza-ai... OK</div>
-    <div class="line">APPLYING dotfiles: my-wayfire-config... OK</div>
-    <div class="line">&gt;&gt;&gt; SYSTEM READY &lt;&lt;&lt;</div>
+    <div class="line">[    0.000000] Linux version 6.9.3-arch1-1 (gcc 14.1.1) #1 SMP PREEMPT_DYNAMIC</div>
+    <div class="line">[    0.000000] BIOS-provided physical RAM map: BIOS-e820</div>
+    <div class="line">[    0.412831] pci 0000:00:01.0: AMD A6-5200 APU detected — 4 cores, pray for them</div>
+    <div class="line">[    0.913204] systemd[1]: Starting adrianpriza-ai personal workstation...</div>
+    <div class="line">[    1.204719] <span style="color:#2ecc71">[  OK  ]</span> Mounted /home/adrian — dotfiles: present, sanity: absent</div>
+    <div class="line">[    1.589300] <span style="color:#2ecc71">[  OK  ]</span> Started wayfire.service — wayland compositor, 1366x768, no regrets</div>
+    <div class="line">[    1.902441] <span style="color:#2ecc71">[  OK  ]</span> Reached target graphical.target</div>
+    <div class="line">[    2.001000] <span style="color:#ff4444">[ WARN ]</span> sleep.service: last sleep: 3 days ago. consider touching grass</div>
   </div>
 
   <!-- MATRIX RAIN -->
   <canvas id="bg-canvas"></canvas>
-
-  <!-- SCANLINE -->
-  <div class="scanline"></div>
 
   <div class="container">
 
@@ -498,44 +485,43 @@
     </header>
 
     <section class="hero">
-      <div class="hero-label">// introduction</div>
+      <div class="hero-label">// who dis</div>
       <h1 class="hero-name">
-        Linux<br />
-        <span class="accent">Enthusiast.</span>
+        Professional<br />
+        <span class="accent">Config Breaker.</span>
       </h1>
       <p class="hero-tagline">
-        <span class="cmd">$</span> tinkerer building custom desktop environments
-        on Arch Linux &mdash; Wayfire, Wayland, and low-end hardware.<br />
-        <span class="cmd">$</span> work in progress. always.
+        <span class="cmd">$</span> hi, i'm adrian. i live in kediri, indonesia and i spend way too much time making my desktop look cool on a potato laptop.<br />
+        <span class="cmd">$</span> no formal skills. just broken configs and 2am fixes.
       </p>
     </section>
 
     <div class="divider">
       <div class="divider-line"></div>
-      <div class="divider-text">// about</div>
+      <div class="divider-text">// about (unfortunately)</div>
       <div class="divider-line" style="background:-webkit-linear-gradient(right,#3a1510,#1e1e26);background:linear-gradient(to left,#3a1510,#1e1e26);"></div>
     </div>
 
     <div class="cards">
       <div class="card">
         <div class="card-icon">[01]</div>
-        <div class="card-title">Desktop Customization</div>
-        <div class="card-desc">Building Eww widget ecosystems, Waybar configs, and full dotfile setups from scratch.</div>
+        <div class="card-title">Arch Linux Ricer</div>
+        <div class="card-desc">I rice my desktop instead of sleeping. Wayfire + Eww widgets + dotfiles nobody asked for.</div>
       </div>
       <div class="card">
         <div class="card-icon">[02]</div>
-        <div class="card-title">Low-End Focused</div>
-        <div class="card-desc">Optimizing for 1366&times;768, AMD APU hardware. Performance matters.</div>
+        <div class="card-title">Low-End Hardware Survivor</div>
+        <div class="card-desc">AMD A6-5200, 8GB RAM, 1366&times;768. I make it work. somehow. please don't ask how.</div>
       </div>
       <div class="card">
         <div class="card-icon">[03]</div>
-        <div class="card-title">Open Source</div>
-        <div class="card-desc">All configs public on GitHub. Clone, fork, adapt &mdash; that's the point.</div>
+        <div class="card-title">Manga Reader</div>
+        <div class="card-desc">When i'm not in a config file, i read manga online instead of sleeping. both activities equally unproductive.</div>
       </div>
       <div class="card">
         <div class="card-icon">[04]</div>
-        <div class="card-title">Always Learning</div>
-        <div class="card-desc">Shell scripting, Wayland protocols, and whatever breaks next.</div>
+        <div class="card-title">Professional Breaker</div>
+        <div class="card-desc">I break things, panic, fix them, then break them again trying to make it "cleaner".</div>
       </div>
     </div>
 
@@ -561,7 +547,7 @@
       <a class="project-link" href="https://github.com/adrianpriza-ai/my-wayfire-config" target="_blank" rel="noopener">
         <div class="project-link-left">
           <div class="project-link-name">my-wayfire-config</div>
-          <div class="project-link-desc">Personal Wayfire dotfiles for Arch Linux &mdash; WIP</div>
+          <div class="project-link-desc">my wayfire dotfiles — probably broken on your machine. works on mine tho</div>
         </div>
         <div class="project-link-arrow">&#8599;</div>
       </a>
@@ -586,7 +572,7 @@
     </div>
 
     <footer>
-      <div class="footer-text">// adrianpriza-ai &mdash; 2025 <span class="footer-blink">█</span></div>
+      <div class="footer-text">// made with sleep deprivation &mdash; kediri, id <span class="footer-blink">█</span></div>
       <a class="footer-link" href="https://github.com/adrianpriza-ai" target="_blank" rel="noopener"
          style="font-family:var(--mono);font-size:12px;color:var(--silver);text-decoration:none;border-bottom:1px solid var(--border);padding-bottom:2px;transition:color .2s,border-color .2s;"
          onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'"
@@ -598,49 +584,109 @@
   </div>
 
   <script>
-    // ── CLOCK in logo after boot ──
-    // (no extra clock needed — keeping design clean)
-
-    // ── MATRIX RAIN (low-end optimized) ──
+    // ── CMATRIX-STYLE RAIN ──
+    // Each column has: a "head" (bright) and a tail that fades
+    // Characters: Japanese katakana, Chinese, Russian, binary
     var canvas = document.getElementById('bg-canvas');
-    var ctx    = canvas.getContext('2d', { alpha: false });
-    var W, H, cols, drops;
-    var chars  = '01アカサタナハЖКНРС我你他░█▄■◇';
-    var CELL   = 40;
-    var MAX_COLS = 28;
+    var ctx    = canvas.getContext('2d');
+    var W, H, FONT, COLS;
 
-    function resize() {
-      W = canvas.width  = Math.floor(window.innerWidth  / 2);
-      H = canvas.height = Math.floor(window.innerHeight / 2);
-      cols = Math.min(Math.floor(W / (CELL / 2)), MAX_COLS);
-      var old = drops ? drops.slice() : [];
-      drops = [];
-      for (var i = 0; i < cols; i++) {
-        drops[i] = old[i] !== undefined ? old[i] : Math.floor(Math.random() * (H / (CELL / 2)));
+    var JP = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    var ZH = '我你他她们的了在人有这个上们来到时大地为子中你说生国年着就那和要她出也得里后自以会家可下而过天去能对小多然于心学么之都好看起发当没成只如事把还用第样道想作种开美总从无情己面最女但现前些所同日手又行意动方期它头经长儿回位分爱老因很给名法间斯知世什两次使身者被高已亲其进此话常与活正感';
+    var RU = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+    var BN = '01';
+    var chars = JP + ZH + RU + BN;
+
+    var streams = []; // each stream: { x, chars[], head, speed, active }
+
+    function initStreams() {
+      FONT = window.innerWidth <= 720 ? 14 : 16;
+      ctx.font = FONT + 'px monospace';
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      COLS = Math.floor(W / (FONT * 1.2));
+
+      streams = [];
+      for (var i = 0; i < COLS; i++) {
+        spawnStream(i, true);
       }
     }
 
-    ctx.font = '11px monospace';
+    function randChar() {
+      return chars.charAt(Math.floor(Math.random() * chars.length));
+    }
 
+    function spawnStream(col, immediate) {
+      var len = 6 + Math.floor(Math.random() * 16); // tail length
+      var speed = 1 + Math.floor(Math.random() * 3); // rows per tick
+      var startY = immediate ? Math.floor(Math.random() * (H / FONT)) : -len;
+      var chs = [];
+      for (var k = 0; k < len; k++) chs.push(randChar());
+      streams[col] = {
+        col:   col,
+        chs:   chs,
+        head:  startY,
+        speed: speed,
+        delay: immediate ? 0 : Math.floor(Math.random() * 300)
+      };
+    }
+
+    var tick = 0;
     setInterval(function() {
-      ctx.fillStyle = 'rgba(5,5,5,0.08)';
-      ctx.fillRect(0, 0, W, H);
-      for (var i = 0; i < cols; i++) {
-        var ch = chars.charAt(Math.floor(Math.random() * chars.length));
-        var x  = i * (CELL / 2);
-        var y  = drops[i] * (CELL / 2);
-        ctx.fillStyle = Math.random() > 0.93 ? '#8b0000' : '#222';
-        ctx.fillText(ch, x, y);
-        if (y > H && Math.random() > 0.97) drops[i] = 0;
-        drops[i]++;
-      }
-    }, 120);
+      tick++;
+      ctx.clearRect(0, 0, W, H);
+      ctx.font = FONT + 'px monospace';
 
-    resize();
+      for (var i = 0; i < streams.length; i++) {
+        var s = streams[i];
+        if (!s) continue;
+
+        // delay before stream starts
+        if (s.delay > 0) { s.delay--; continue; }
+
+        var x = s.col * (FONT * 1.2);
+        var len = s.chs.length;
+
+        for (var j = 0; j < len; j++) {
+          var row = s.head - j;
+          if (row < 0 || row > H / FONT) continue;
+          var y = row * FONT;
+
+          if (j === 0) {
+            // head — bright white/silver
+            ctx.fillStyle = '#e8e8ec';
+          } else {
+            // tail fades from red to dark
+            var fade = 1 - (j / len);
+            if (fade > 0.6) {
+              ctx.fillStyle = '#c0392b';
+            } else if (fade > 0.3) {
+              ctx.fillStyle = '#7a1f17';
+            } else {
+              ctx.fillStyle = '#2a0a08';
+            }
+          }
+
+          // randomly mutate chars in tail
+          if (j > 0 && Math.random() > 0.92) s.chs[j] = randChar();
+          ctx.fillText(s.chs[j], x, y);
+        }
+
+        // advance stream
+        if (tick % s.speed === 0) s.head++;
+
+        // respawn when fully off screen
+        if ((s.head - len) * FONT > H) {
+          spawnStream(i, false);
+        }
+      }
+    }, 200);
+
+    initStreams();
     var resizeTimer;
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(resize, 200);
+      resizeTimer = setTimeout(initStreams, 200);
     });
   </script>
 </body>
