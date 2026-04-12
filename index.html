@@ -359,6 +359,10 @@
     .project-link-desc { font-family: var(--mono); font-size: 11px; color: var(--muted); }
     .project-link-arrow { font-family: var(--mono); font-size: 18px; color: var(--red); }
 
+	.project-link + .project-link {
+	  margin-top: 10px;
+	}
+	
     /* ── SOCIAL LINKS ── */
     .social-section {
       margin: 48px 0;
@@ -548,6 +552,13 @@
         <div class="project-link-left">
           <div class="project-link-name">my-wayfire-config</div>
           <div class="project-link-desc">my wayfire dotfiles — probably broken on your machine. works on mine tho</div>
+        </div>
+        <div class="project-link-arrow">&#8599;</div>
+      </a>
+      <a class="project-link" href="https://github.com/adrianpriza-ai/alps" target="_blank" rel="noopener">
+        <div class="project-link-left">
+          <div class="project-link-name">alps</div>
+          <div class="project-link-desc">Package Helper — not even on version 1.0 yet</div>
         </div>
         <div class="project-link-arrow">&#8599;</div>
       </a>
