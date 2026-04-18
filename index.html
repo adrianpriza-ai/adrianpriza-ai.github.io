@@ -32,46 +32,40 @@
 
     /* ── BOOT SEQUENCE ── */
     #boot {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      z-index: 9999;
-      background: #000;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-          -ms-flex-direction: column;
-              flex-direction: column;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      padding: 3rem;
-      font-family: var(--mono);
-      font-size: 1rem;
-      color: var(--red);
-      -webkit-animation: bootFade 0.4s 2.5s forwards;
-              animation: bootFade 0.4s 2.5s forwards;
-    }
-
-    #boot .line {
-      opacity: 0;
-      -webkit-animation: bootLine 0.01s forwards;
-              animation: bootLine 0.01s forwards;
-    }
-    #boot .line:nth-child(1) { -webkit-animation-delay: 0.0s;  animation-delay: 0.0s; }
-    #boot .line:nth-child(2) { -webkit-animation-delay: 0.2s;  animation-delay: 0.2s; }
-    #boot .line:nth-child(3) { -webkit-animation-delay: 0.45s; animation-delay: 0.45s; }
-    #boot .line:nth-child(4) { -webkit-animation-delay: 0.65s; animation-delay: 0.65s; }
-    #boot .line:nth-child(5) { -webkit-animation-delay: 0.85s; animation-delay: 0.85s; }
-    #boot .line:nth-child(6) { -webkit-animation-delay: 1.1s;  animation-delay: 1.1s; }
-    #boot .line:nth-child(7) { -webkit-animation-delay: 1.4s;  animation-delay: 1.4s; }
-    #boot .line:nth-child(8) { -webkit-animation-delay: 1.7s;  animation-delay: 1.7s; color: #ff4444; }
-
-    @-webkit-keyframes bootLine { to { opacity: 1; } }
-    @keyframes bootLine { to { opacity: 1; } }
-
-    @-webkit-keyframes bootFade { to { opacity: 0; pointer-events: none; } }
-    @keyframes bootFade { to { opacity: 0; pointer-events: none; } }
+	  position: fixed;
+	  top: 0; left: 0; right: 0; bottom: 0;
+	  z-index: 9999;
+	  background: #000;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: flex-start;
+	  padding: 2rem 2.5rem;
+	  font-family: var(--mono);
+	  font-size: 0.78rem;
+	  line-height: 1.55;
+	  color: var(--red);
+	  overflow: hidden;
+	}
+	#boot .ts   { color: #555577; }
+	#boot .ok   { color: #2ecc71; font-weight: 700; }
+	#boot .warn { color: #f5c542; font-weight: 700; }
+	#boot .info { color: #7ab4f5; }
+	#boot .mod  { color: #5ecfc4; }
+	#boot .bl   { opacity: 0; white-space: pre; color: #c8c8e8; animation: bootLine 0.01s forwards; }
+	#boot-scroll { overflow: hidden; display: flex; flex-direction: column; }
+	#boot-cursor {
+	  display: inline-block;
+	  width: 8px; height: 1em;
+	  background: #2ecc71;
+	  animation: blink 0.8s step-end infinite;
+	  vertical-align: middle;
+	  margin-left: 2px;
+	  opacity: 0;
+	}
+	@keyframes bootLine { to { opacity: 1; } }
+	@keyframes bootFade { to { opacity: 0; pointer-events: none; } }
+	#boot.fade-out { animation: bootFade 0.5s forwards; }
+	@keyframes blink { 50% { opacity: 0; } }
 
     /* ── CMATRIX CANVAS ── */
     #bg-canvas {
@@ -81,7 +75,6 @@
       z-index: 0;
       pointer-events: none;
       opacity: 0.35;
-      will-change: contents;
     }
 
     /* ── GLOW BLOB (kept from original) ── */
@@ -342,6 +335,19 @@
       -webkit-transition: border-color 0.3s, background 0.3s;
               transition: border-color 0.3s, background 0.3s;
     }
+    .project-badge {
+	  font-family: var(--mono);
+	  font-size: 10px;
+	  padding: 2px 8px;
+	  border: 1px solid var(--border);
+	  color: var(--silver);
+	  margin-left: 8px;
+	  vertical-align: middle;
+	  display: inline-block;
+	  line-height: 1.6;
+	}
+	.project-badge.lang { color: #5ecfc4 !important; border-color: rgba(94,207,196,0.25); background: rgba(94,207,196,0.06); }
+	.project-badge.status { color: #f5c542 !important; border-color: rgba(245,197,66,0.2); background: rgba(245,197,66,0.06); }
     .project-link:hover {
       border-color: var(--red);
       background: rgba(192,57,43,0.05);
@@ -465,15 +471,9 @@
 
   <!-- BOOT -->
   <div id="boot">
-    <div class="line">[    0.000000] Linux version 6.9.3-arch1-1 (gcc 14.1.1) #1 SMP PREEMPT_DYNAMIC</div>
-    <div class="line">[    0.000000] BIOS-provided physical RAM map: BIOS-e820</div>
-    <div class="line">[    0.412831] pci 0000:00:01.0: AMD A6-5200 APU detected — 4 cores, pray for them</div>
-    <div class="line">[    0.913204] systemd[1]: Starting adrianpriza-ai personal workstation...</div>
-    <div class="line">[    1.204719] <span style="color:#2ecc71">[  OK  ]</span> Mounted /home/adrian — dotfiles: present, sanity: absent</div>
-    <div class="line">[    1.589300] <span style="color:#2ecc71">[  OK  ]</span> Started wayfire.service — wayland compositor, 1366x768, no regrets</div>
-    <div class="line">[    1.902441] <span style="color:#2ecc71">[  OK  ]</span> Reached target graphical.target</div>
-    <div class="line">[    2.001000] <span style="color:#ff4444">[ WARN ]</span> sleep.service: last sleep: 3 days ago. consider touching grass</div>
-  </div>
+	  <div id="boot-scroll"></div>
+	  <span id="boot-cursor"></span>
+	</div>
 
   <!-- MATRIX RAIN -->
   <canvas id="bg-canvas"></canvas>
@@ -550,14 +550,14 @@
       <div class="section-label">// projects</div>
       <a class="project-link" href="https://github.com/adrianpriza-ai/my-wayfire-config" target="_blank" rel="noopener">
         <div class="project-link-left">
-          <div class="project-link-name">my-wayfire-config</div>
+          <div class="project-link-name">my-wayfire-config <span class="project-badge lang">dotfiles</span></div>
           <div class="project-link-desc">my wayfire dotfiles — probably broken on your machine. works on mine tho</div>
         </div>
         <div class="project-link-arrow">&#8599;</div>
       </a>
       <a class="project-link" href="https://github.com/adrianpriza-ai/alps" target="_blank" rel="noopener">
         <div class="project-link-left">
-          <div class="project-link-name">alps</div>
+          <div class="project-link-name">alps <span class="project-badge lang">Go</span> <span class="project-badge status">pre-1.0</span></div>
           <div class="project-link-desc">Package Helper — not even on version 1.0 yet</div>
         </div>
         <div class="project-link-arrow">&#8599;</div>
@@ -595,111 +595,124 @@
   </div>
 
   <script>
-    // ── CMATRIX-STYLE RAIN ──
-    // Each column has: a "head" (bright) and a tail that fades
-    // Characters: Japanese katakana, Chinese, Russian, binary
-    var canvas = document.getElementById('bg-canvas');
-    var ctx    = canvas.getContext('2d');
-    var W, H, FONT, COLS;
+	(function() {
+	  var bootLines = [
+		{ d:0,   t:'[    0.000000] Linux version 6.14.2-arch1-2 (gcc 14.2.1) #1 SMP PREEMPT_DYNAMIC' },
+		{ d:40,  t:'[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable' },
+		{ d:75,  t:'[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000dfffffff] usable' },
+		{ d:110, t:'[    0.000112] ACPI: RSDP 0x00000000000F05B0 000024 (v02 HPQOEM)' },
+		{ d:140, t:'[    0.210831] pci 0000:00:01.0: AMD A6-5200 APU @ 2.0GHz — 4 cores, pray for them' },
+		{ d:175, t:'[    0.314821] clocksource: tsc-early: mask: 0xffffffffffffffff' },
+		{ d:205, t:'[    0.412019] ACPI: bus type PCI registered' },
+		{ d:235, t:'[    0.510444] <span class="mod">r8723be: Realtek RTL8723BE PCIe Wireless — loading firmware...</span>' },
+		{ d:275, t:'[    0.612809] <span class="ok">r8723be: firmware loaded OK, sta mode</span>' },
+		{ d:305, t:'[    0.714233] input: AT Translated Set 2 keyboard as /dev/input/event0' },
+		{ d:335, t:'[    0.821441] EXT4-fs (sda3): mounted filesystem with ordered data mode' },
+		{ d:365, t:'[    0.913204] systemd[1]: Starting adrianpriza-ai personal workstation...' },
+		{ d:395, t:'[    1.012003] Bluetooth: HCI device and connection manager initialized' },
+		{ d:420, t:'[    1.103881] <span class="ok">[  OK  ]</span> Mounted /boot/efi (vfat, rw)' },
+		{ d:445, t:'[    1.204719] <span class="ok">[  OK  ]</span> Mounted /home/adrian — dotfiles: present, sanity: absent' },
+		{ d:468, t:'[    1.305400] <span class="ok">[  OK  ]</span> Started NetworkManager.service' },
+		{ d:490, t:'[    1.407022] <span class="ok">[  OK  ]</span> Started systemd-udevd — udev Kernel Device Manager' },
+		{ d:512, t:'[    1.512340] <span class="ok">[  OK  ]</span> Reached target Network' },
+		{ d:534, t:'[    1.614019] <span class="ok">[  OK  ]</span> Started dbus-broker.service' },
+		{ d:556, t:'[    1.715003] <span class="ok">[  OK  ]</span> Started wayfire.service — Wayland compositor, 1366x768, no regrets' },
+		{ d:580, t:'[    1.816322] <span class="ok">[  OK  ]</span> Started mako.service — notification daemon' },
+		{ d:604, t:'[    1.910044] <span class="ok">[  OK  ]</span> Reached target graphical.target' },
+		{ d:630, t:'[    2.001000] <span class="warn">[ WARN ]</span> sleep.service: last sleep: 3 days ago. consider touching grass' },
+	  ];
 
-    var JP = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-    var ZH = '我你他她们的了在人有这个上们来到时大地为子中你说生国年着就那和要她出也得里后自以会家可下而过天去能对小多然于心学么之都好看起发当没成只如事把还用第样道想作种开美总从无情己面最女但现前些所同日手又行意动方期它头经长儿回位分爱老因很给名法间斯知世什两次使身者被高已亲其进此话常与活正感';
-    var RU = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
-    var BN = '01';
-    var chars = JP + ZH + RU + BN;
+	  var scroll = document.getElementById('boot-scroll');
+	  var cursor = document.getElementById('boot-cursor');
+	  var bootEl = document.getElementById('boot');
+	  var lastD  = bootLines[bootLines.length - 1].d;
 
-    var streams = []; // each stream: { x, chars[], head, speed, active }
+	  bootLines.forEach(function(line) {
+		setTimeout(function() {
+		  var div = document.createElement('div');
+		  div.className = 'bl';
+		  var txt = line.t.replace(/^(\[[\s\d\.]+\])/, '<span class="ts">$1</span>');
+		  div.innerHTML = txt;
+		  scroll.appendChild(div);
+		  cursor.style.opacity = '1';
+		  bootEl.scrollTop = bootEl.scrollHeight;
+		}, line.d);
+	  });
 
-    function initStreams() {
-      FONT = window.innerWidth <= 720 ? 14 : 16;
-      ctx.font = FONT + 'px monospace';
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      COLS = Math.floor(W / (FONT * 1.2));
+	  setTimeout(function() {
+		cursor.style.opacity = '0';
+		bootEl.classList.add('fade-out');
+		setTimeout(function() { bootEl.style.display = 'none'; }, 500);
+	  }, lastD + 500);
 
-      streams = [];
-      for (var i = 0; i < COLS; i++) {
-        spawnStream(i, true);
-      }
-    }
+	  // ── CMATRIX (original, unchanged) ──
+	  var canvas = document.getElementById('bg-canvas');
+	  var ctx    = canvas.getContext('2d');
+	  var W, H, FONT, COLS;
+	  var JP = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+	  var ZH = '我你他她们的了在人有这个上们来到时大地为子中你说生国年着就那和要她出也得里后自以会家可下而过天去能对小多然于心学么之都好看起发当没成只如事把还用第样道想作种开美总从无情己面最女但现前些所同日手又行意动方期它头经长儿回位分爱老因很给名法间斯知世什两次使身者被高已亲其进此话常与活正感';
+	  var RU = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+	  var BN = '01';
+	  var chars = JP + ZH + RU + BN;
+	  var streams = [];
 
-    function randChar() {
-      return chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+	  function initStreams() {
+		FONT = window.innerWidth <= 720 ? 14 : 16;
+		ctx.font = FONT + 'px monospace';
+		W = canvas.width  = window.innerWidth;
+		H = canvas.height = window.innerHeight;
+		COLS = Math.floor(W / (FONT * 1.2));
+		streams = [];
+		for (var i = 0; i < COLS; i++) spawnStream(i, true);
+	  }
 
-    function spawnStream(col, immediate) {
-      var len = 6 + Math.floor(Math.random() * 16); // tail length
-      var speed = 1 + Math.floor(Math.random() * 3); // rows per tick
-      var startY = immediate ? Math.floor(Math.random() * (H / FONT)) : -len;
-      var chs = [];
-      for (var k = 0; k < len; k++) chs.push(randChar());
-      streams[col] = {
-        col:   col,
-        chs:   chs,
-        head:  startY,
-        speed: speed,
-        delay: immediate ? 0 : Math.floor(Math.random() * 300)
-      };
-    }
+	  function randChar() { return chars.charAt(Math.floor(Math.random() * chars.length)); }
 
-    var tick = 0;
-    setInterval(function() {
-      tick++;
-      ctx.clearRect(0, 0, W, H);
-      ctx.font = FONT + 'px monospace';
+	  function spawnStream(col, immediate) {
+		var len = 6 + Math.floor(Math.random() * 16);
+		var speed = 1 + Math.floor(Math.random() * 3);
+		var startY = immediate ? Math.floor(Math.random() * (H / FONT)) : -len;
+		var chs = [];
+		for (var k = 0; k < len; k++) chs.push(randChar());
+		streams[col] = { col: col, chs: chs, head: startY, speed: speed, delay: immediate ? 0 : Math.floor(Math.random() * 300) };
+	  }
 
-      for (var i = 0; i < streams.length; i++) {
-        var s = streams[i];
-        if (!s) continue;
+	  var tick = 0;
+	  setInterval(function() {
+		tick++;
+		ctx.clearRect(0, 0, W, H);
+		ctx.font = FONT + 'px monospace';
+		for (var i = 0; i < streams.length; i++) {
+		  var s = streams[i];
+		  if (!s) continue;
+		  if (s.delay > 0) { s.delay--; continue; }
+		  var x = s.col * (FONT * 1.2);
+		  var len = s.chs.length;
+		  for (var j = 0; j < len; j++) {
+			var row = s.head - j;
+			if (row < 0 || row > H / FONT) continue;
+			var y = row * FONT;
+			if (j === 0) { ctx.fillStyle = '#e8e8ec'; }
+			else {
+			  var fade = 1 - (j / len);
+			  ctx.fillStyle = fade > 0.6 ? '#c0392b' : fade > 0.3 ? '#7a1f17' : '#2a0a08';
+			}
+			if (j > 0 && Math.random() > 0.92) s.chs[j] = randChar();
+			ctx.fillText(s.chs[j], x, y);
+		  }
+		  if (tick % s.speed === 0) s.head++;
+		  if ((s.head - len) * FONT > H) spawnStream(i, false);
+		}
+	  }, 200);
 
-        // delay before stream starts
-        if (s.delay > 0) { s.delay--; continue; }
-
-        var x = s.col * (FONT * 1.2);
-        var len = s.chs.length;
-
-        for (var j = 0; j < len; j++) {
-          var row = s.head - j;
-          if (row < 0 || row > H / FONT) continue;
-          var y = row * FONT;
-
-          if (j === 0) {
-            // head — bright white/silver
-            ctx.fillStyle = '#e8e8ec';
-          } else {
-            // tail fades from red to dark
-            var fade = 1 - (j / len);
-            if (fade > 0.6) {
-              ctx.fillStyle = '#c0392b';
-            } else if (fade > 0.3) {
-              ctx.fillStyle = '#7a1f17';
-            } else {
-              ctx.fillStyle = '#2a0a08';
-            }
-          }
-
-          // randomly mutate chars in tail
-          if (j > 0 && Math.random() > 0.92) s.chs[j] = randChar();
-          ctx.fillText(s.chs[j], x, y);
-        }
-
-        // advance stream
-        if (tick % s.speed === 0) s.head++;
-
-        // respawn when fully off screen
-        if ((s.head - len) * FONT > H) {
-          spawnStream(i, false);
-        }
-      }
-    }, 200);
-
-    initStreams();
-    var resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initStreams, 200);
-    });
-  </script>
+	  initStreams();
+	  var resizeTimer;
+	  window.addEventListener('resize', function() {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(initStreams, 200);
+	  });
+	})();
+	</script>
 </body>
 </html>
 
