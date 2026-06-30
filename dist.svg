@@ -1,0 +1,62 @@
+<svg width="400" height="130" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .state1 { animation: show1 2s infinite; }
+    .state2 { animation: show2 2s infinite; }
+    
+    @keyframes show1 {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    @keyframes show2 {
+      0%, 49% { opacity: 0; }
+      50%, 100% { opacity: 1; }
+    }
+    .text-container {
+      color: #24292f; /* Dark gray for light mode */
+      font-family: monospace; 
+      white-space: pre; 
+      font-size: 14px; 
+      line-height: 1;
+    }
+    @media (prefers-color-scheme: dark) {
+      .text-container {
+        color: #c9d1d9; /* Light gray for dark mode */
+      }
+    }
+  </style>
+
+  <foreignObject x="0" y="-10" width="400" height="200">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="text-container" style="
+      position: relative;
+      width: 100%;
+      height: 100%;
+    ">
+      <div class="state1" style="position: absolute; top: 0; left: 0; margin: 0;">
+ ██████████    ███           █████             
+░░███░░░░███  ░░░           ░░███              
+ ░███   ░░███ ████   █████  ███████            
+ ░███    ░███░░███  ███░░  ░░░███░             
+ ░███    ░███ ░███ ░░█████   ░███              
+ ░███    ███  ░███  ░░░░███  ░███ ███          
+ ██████████   █████ ██████   ░░█████  █████████
+░░░░░░░░░░   ░░░░░ ░░░░░░     ░░░░░  ░░░░░░░░░ 
+                                               
+                                               
+                                               
+      </div>
+      <div class="state2" style="position: absolute; top: 0; left: 0; margin: 0;">
+ ██████████    ███           █████   
+░░███░░░░███  ░░░           ░░███    
+ ░███   ░░███ ████   █████  ███████  
+ ░███    ░███░░███  ███░░  ░░░███░   
+ ░███    ░███ ░███ ░░█████   ░███    
+ ░███    ███  ░███  ░░░░███  ░███ ███
+ ██████████   █████ ██████   ░░█████ 
+░░░░░░░░░░   ░░░░░ ░░░░░░     ░░░░░  
+                                     
+                                     
+                                     
+      </div>
+    </div>
+  </foreignObject>
+</svg>
