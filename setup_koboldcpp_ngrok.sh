@@ -145,13 +145,11 @@ fi
 # ---------- start koboldcpp ----------
 info "Starting koboldcpp on port $PORT (ctx=$CTX_SIZE)"
 ./"$KCPP_BIN" \
-    "$MODEL_PATH" \
+    -m "$MODEL_PATH" \
     --host 0.0.0.0 \
     --port "$PORT" \
     --contextsize "$CTX_SIZE" \
-    --modelalias "$MODEL_ALIAS" \
     --threads "$(nproc)" \
-    --quiet \
     --skiplauncher \
     "${GPU_RUNTIME_FLAGS[@]}" \
     > koboldcpp.log 2>&1 &
@@ -198,7 +196,7 @@ echo "======================================"
 echo "Server running!"
 echo
 echo "koboldcpp:    $KCPP_VERSION ($ASSET_NAME)"
-echo "Model:        $MODEL_FILENAME (alias: $MODEL_ALIAS)"
+echo "Model:        $MODEL_FILENAME"
 echo "Context size: $CTX_SIZE"
 echo "GPU offload:  ${GPU_RUNTIME_FLAGS[*]:-none (CPU only)}"
 echo "Port:         $PORT"
