@@ -7,16 +7,16 @@ info()  { echo -e "${GREEN}==>${RESET} $*"; }
 warn()  { echo -e "${YELLOW}!!${RESET} $*"; }
 error() { echo -e "${RED}xx${RESET} $*" >&2; }
 
-LLAMA_PID=""
+KOBOLD_PID=""
 NGROK_PID=""
 cleanup() {
-    [[ -n "$LLAMA_PID" ]] && kill -0 "$LLAMA_PID" 2>/dev/null && kill "$LLAMA_PID" 2>/dev/null
+    [[ -n "$KOBOLD_PID" ]] && kill -0 "$KOBOLD_PID" 2>/dev/null && kill "$KOBOLD_PID" 2>/dev/null
     [[ -n "$NGROK_PID" ]] && kill -0 "$NGROK_PID" 2>/dev/null && kill "$NGROK_PID" 2>/dev/null
     return 0
 }
 trap cleanup EXIT INT TERM
 
-echo "=== llama.cpp + ngrok Setup ==="
+echo "=== koboldcpp + ngrok Setup ==="
 echo
 
 # ---------- input ----------
@@ -44,8 +44,8 @@ read -p "Context size [default 4096]: " CTX_SIZE < "$TTY"
 CTX_SIZE=${CTX_SIZE:-4096}
 
 echo
-read -p "Port [default 8000]: " PORT < "$TTY"
-PORT=${PORT:-8000}
+read -p "Port [default 5001]: " PORT < "$TTY"
+PORT=${PORT:-5001}
 
 echo
 read -p "Model alias for API responses [default = filename]: " MODEL_ALIAS < "$TTY"
@@ -53,7 +53,7 @@ read -p "Model alias for API responses [default = filename]: " MODEL_ALIAS < "$T
 # ---------- packages ----------
 info "Installing system packages"
 apt-get update -qq
-apt-get install -y -qq git wget curl cmake build-essential lsof > /dev/null
+apt-get install -y -qq wget curl lsof > /dev/null
 
 pip install -q pyngrok
 
@@ -69,41 +69,50 @@ ngrok config add-authtoken "$NGROK_TOKEN" > /dev/null
 
 # ---------- GPU detection ----------
 info "Detecting GPU"
-CMAKE_GPU_FLAGS=()
-RUNTIME_GPU_FLAGS=()
+GPU_RUNTIME_FLAGS=()
+HAS_GPU=0
 if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi >/dev/null 2>&1; then
     GPU_NAME=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
     info "NVIDIA GPU detected: $GPU_NAME"
-
-    if ! command -v nvcc >/dev/null 2>&1 && [[ -x /usr/local/cuda/bin/nvcc ]]; then
-        export PATH="/usr/local/cuda/bin:$PATH"
-    fi
-
-    if command -v nvcc >/dev/null 2>&1; then
-        CMAKE_GPU_FLAGS=(-DGGML_CUDA=ON)
-        RUNTIME_GPU_FLAGS=(-ngl 999 --flash-attn)
-        info "CUDA toolkit found — GPU build enabled with full offload"
-    else
-        warn "nvidia-smi works but nvcc not found — building CPU-only (try: apt-get install -y nvidia-cuda-toolkit)"
-    fi
+    HAS_GPU=1
+    GPU_RUNTIME_FLAGS=(--usecublas mmq --gpulayers 999)
 else
-    info "No NVIDIA GPU detected — building CPU-only"
+    info "No NVIDIA GPU detected — will run CPU-only build"
 fi
 
-# ---------- clone / build ----------
-if [[ -d llama.cpp ]]; then
-    info "llama.cpp already present, pulling latest"
-    cd llama.cpp
-    git pull --ff-only
+# ---------- fetch latest koboldcpp release ----------
+info "Looking up latest koboldcpp release"
+RELEASE_JSON=$(curl -sSL https://api.github.com/repos/LostRuins/koboldcpp/releases/latest)
+KCPP_VERSION=$(echo "$RELEASE_JSON" | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+
+if [[ "$HAS_GPU" -eq 1 ]]; then
+    ASSET_NAME="koboldcpp-linux-x64"
 else
-    info "Cloning llama.cpp"
-    git clone --depth 1 https://github.com/ggml-org/llama.cpp.git
-    cd llama.cpp
+    ASSET_NAME="koboldcpp-linux-x64-nocuda"
 fi
 
-info "Building llama.cpp (this can take a few minutes)"
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON "${CMAKE_GPU_FLAGS[@]}"
-cmake --build build -j"$(nproc)"
+KCPP_URL=$(echo "$RELEASE_JSON" \
+    | grep "browser_download_url" \
+    | grep "$ASSET_NAME\"" \
+    | sed -E 's/.*"(https[^"]+)".*/\1/' \
+    | head -n1)
+
+if [[ -z "$KCPP_URL" ]]; then
+    error "Could not resolve download URL for asset '$ASSET_NAME' from latest release ($KCPP_VERSION)."
+    exit 1
+fi
+
+info "Latest koboldcpp: $KCPP_VERSION ($ASSET_NAME)"
+
+# ---------- download koboldcpp binary ----------
+KCPP_BIN="koboldcpp"
+if [[ -f "$KCPP_BIN" && -x "$KCPP_BIN" ]]; then
+    info "koboldcpp binary already present, re-downloading to ensure it's the latest"
+fi
+
+info "Downloading koboldcpp binary"
+wget -q --show-progress -O "$KCPP_BIN" "$KCPP_URL"
+chmod +x "$KCPP_BIN"
 
 mkdir -p models
 
@@ -133,34 +142,35 @@ if lsof -i:"$PORT" -t >/dev/null 2>&1; then
     exit 1
 fi
 
-# ---------- start server ----------
-info "Starting llama-server on port $PORT (ctx=$CTX_SIZE)"
-./build/bin/llama-server \
-    -m "$MODEL_PATH" \
+# ---------- start koboldcpp ----------
+info "Starting koboldcpp on port $PORT (ctx=$CTX_SIZE)"
+./"$KCPP_BIN" \
+    --model "$MODEL_PATH" \
     --host 0.0.0.0 \
     --port "$PORT" \
-    -c "$CTX_SIZE" \
-    --alias "$MODEL_ALIAS" \
-    --jinja \
+    --contextsize "$CTX_SIZE" \
+    --modelalias "$MODEL_ALIAS" \
     --threads "$(nproc)" \
-    "${RUNTIME_GPU_FLAGS[@]}" \
-    > llama.log 2>&1 &
-LLAMA_PID=$!
+    --quiet \
+    --skiplauncher \
+    "${GPU_RUNTIME_FLAGS[@]}" \
+    > koboldcpp.log 2>&1 &
+KOBOLD_PID=$!
 
-info "Waiting for llama-server to become healthy..."
-for i in $(seq 1 60); do
-    if curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
-        info "llama-server is up"
+info "Waiting for koboldcpp to become healthy..."
+for i in $(seq 1 90); do
+    if curl -sf "http://127.0.0.1:${PORT}/api/v1/model" >/dev/null 2>&1; then
+        info "koboldcpp is up"
         break
     fi
-    if ! kill -0 "$LLAMA_PID" 2>/dev/null; then
-        error "llama-server exited unexpectedly. Last log lines:"
-        tail -n 30 llama.log
+    if ! kill -0 "$KOBOLD_PID" 2>/dev/null; then
+        error "koboldcpp exited unexpectedly. Last log lines:"
+        tail -n 30 koboldcpp.log
         exit 1
     fi
-    if [[ "$i" -eq 60 ]]; then
-        error "llama-server did not become healthy in time. Last log lines:"
-        tail -n 30 llama.log
+    if [[ "$i" -eq 90 ]]; then
+        error "koboldcpp did not become healthy in time. Last log lines:"
+        tail -n 30 koboldcpp.log
         exit 1
     fi
     sleep 2
@@ -187,19 +197,23 @@ echo
 echo "======================================"
 echo "Server running!"
 echo
+echo "koboldcpp:    $KCPP_VERSION ($ASSET_NAME)"
 echo "Model:        $MODEL_FILENAME (alias: $MODEL_ALIAS)"
 echo "Context size: $CTX_SIZE"
-echo "GPU offload:  ${RUNTIME_GPU_FLAGS[*]:-none (CPU only)}"
+echo "GPU offload:  ${GPU_RUNTIME_FLAGS[*]:-none (CPU only)}"
 echo "Port:         $PORT"
 echo
-echo "OpenAI endpoint:"
+echo "OpenAI-compatible endpoint:"
 echo "$URL"
 echo
 echo "Examples:"
 echo "$URL/v1/chat/completions"
 echo "$URL/v1/models"
 echo
+echo "KoboldAI-native UI:"
+echo "$URL"
+echo
 echo "API Key: anything"
 echo "======================================"
 
-wait "$LLAMA_PID" "$NGROK_PID"
+wait "$KOBOLD_PID" "$NGROK_PID"
