@@ -145,7 +145,7 @@ fi
 # ---------- start koboldcpp ----------
 info "Starting koboldcpp on port $PORT (ctx=$CTX_SIZE)"
 ./"$KCPP_BIN" \
-    --model "$MODEL_PATH" \
+    "$MODEL_PATH" \
     --host 0.0.0.0 \
     --port "$PORT" \
     --contextsize "$CTX_SIZE" \
