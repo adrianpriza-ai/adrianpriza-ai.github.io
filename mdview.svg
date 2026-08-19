@@ -1,0 +1,53 @@
+<svg width="587" height="180" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text-container {
+      color: #24292f;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1;
+      white-space: pre;
+      overflow: hidden;
+      overflow-wrap: normal;
+      word-wrap: normal;
+      word-break: normal;
+    }
+
+    .ascii {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 0;
+      white-space: pre;
+      display: block;
+      width: max-content;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .text-container {
+        color: #c9d1d9;
+      }
+    }
+  </style>
+
+  <foreignObject x="0" y="-10" width="587" height="180">
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         class="text-container"
+         style="position: relative; width: 100%; height: 100%;">
+      <div class="ascii">
+  ██████████████████████████████████                                  
+ ██                                ██                                 
+██    ██████   ██████ ██████████    ██                               
+██   ░░██████ ██████ ░░███░░░░███   ██                               
+██    ░███░█████░███  ░███   ░░███  ██  ██    ██ ███████ ██ ██     ██
+██    ░███░░███ ░███  ░███    ░███  ██ ░██   ░██░██░░░░ ░██░██    ░██
+██    ░███ ░░░  ░███  ░███    ░███  ██ ░██   ░██░█████  ░██░██  █ ░██
+██    ░███      ░███  ░███    ███   ██ ░░██  ██ ░██░░   ░██░██ ███░██
+██    █████     █████ ██████████    ██  ░░████  ░███████░██░░███░███ 
+██   ░░░░░     ░░░░░ ░░░░░░░░░░     ██   ░░░░   ░░░░░░░ ░░  ░░░ ░░░  
+ ██                                ██                               
+  ██████████████████████████████████                                
+
+      </div>
+    </div>
+  </foreignObject>
+</svg>
